@@ -9,6 +9,7 @@ from nltk.cluster.util import cosine_distance
 # Word Cloud
 import base64
 from io import BytesIO
+from starlette.routing import request_response
 from wordcloud import WordCloud, STOPWORDS
 
 # FastAPI
@@ -18,7 +19,10 @@ from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
 app = FastAPI()
-
+# environment $$ pipenv shell
+# $$ pip install fastapi
+# $$ uvicorn app:app --reload # server baslatır yenıden yukler
+# 
 # Templates
 templates = Jinja2Templates(directory="templates")
 
@@ -72,11 +76,6 @@ def core_cosine_similarity(vector1, vector2):
     return 1 - cosine_distance(vector1, vector2)
 
 
-'''
-Note: This is not a summarization algorithm. This Algorithm pics top sentences irrespective of the order they appeared.
-'''
-
-
 class TextRank4Sentences():
     def __init__(self):
         self.damping = 0.85  # damping coefficient, usually is .85
@@ -121,14 +120,16 @@ class TextRank4Sentences():
                 if idx1 == idx2:
                     continue
 
-                sm[idx1][idx2] = self._sentence_similarity(sentences[idx1], sentences[idx2], stopwords=stopwords)
+                sm[idx1][idx2] = self._sentence_similarity(
+                    sentences[idx1], sentences[idx2], stopwords=stopwords)
 
         # Get Symmeric matrix
         sm = get_symmetric_matrix(sm)
 
         # Normalize matrix by column
         norm = np.sum(sm, axis=0)
-        sm_norm = np.divide(sm, norm, where=norm != 0)  # this is ignore the 0 element in norm
+        # this is ignore the 0 element in norm
+        sm_norm = np.divide(sm, norm, where=norm != 0)
 
         return sm_norm
 
@@ -139,7 +140,8 @@ class TextRank4Sentences():
         # Iteration
         previous_pr = 0
         for epoch in range(self.steps):
-            pr_vector = (1 - self.damping) + self.damping * np.matmul(similarity_matrix, pr_vector)
+            pr_vector = (1 - self.damping) + self.damping * \
+                np.matmul(similarity_matrix, pr_vector)
             if abs(previous_pr - sum(pr_vector)) < self.min_diff:
                 break
             else:
@@ -179,44 +181,46 @@ class TextRank4Sentences():
 
         tokenized_sentences = [word_tokenize(sent) for sent in self.sentences]
 
-        similarity_matrix = self._build_similarity_matrix(tokenized_sentences, stop_words)
+        similarity_matrix = self._build_similarity_matrix(
+            tokenized_sentences, stop_words)
 
         self.pr_vector = self._run_page_rank(similarity_matrix)
 
 
-
-
 @app.get("/")
 def home(request: Request):
-    
+
     return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.post("/")
 async def home(request: Request):
-    sentence_count=0
-    summary=""
+    sentence_count = 0
+    summary = ""
     if request.method == "POST":
         form = await request.form()
-        if form["message"] and form["sentence_count"]: 
+        if form["message"] and form["sentence_count"]:
             sentence_count = form["sentence_count"]
             text_str = form["message"]
-            sentence_count=int(sentence_count)
+            sentence_count = int(sentence_count)
 
             tr4sh = TextRank4Sentences()
             tr4sh.analyze(text_str)
-
-
             summary = tr4sh.get_top_sentences(sentence_count)
-
+            #word_cloud = wordcloud(summary)
+            
+            
+            
+            
     return templates.TemplateResponse("index.html", {"request": request, "summary": summary})
 
 
-def wordcloud(text):
+def wordcloud(text_str):
     stopwords = set(STOPWORDS)
-    wordcloud = WordCloud(width = 800, height = 800, 
-                background_color ='white', 
-                stopwords = stopwords, 
-                min_font_size = 10).generate(text).to_image()
+    wordcloud = WordCloud(width=800, height=800,
+                          background_color='white',
+                          stopwords=stopwords,
+                          min_font_size=10).generate(text_str).to_image()
     img = BytesIO()
     wordcloud.save(img, "PNG")
     img.seek(0)
