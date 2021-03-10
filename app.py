@@ -19,17 +19,12 @@ from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
 app = FastAPI()
-# environment $$ pipenv shell
-# $$ pip install fastapi
-# $$ uvicorn app:app --reload # server baslatır yenıden yukler
-# 
+
 # Templates
 templates = Jinja2Templates(directory="templates")
 
-
 MULTIPLE_WHITESPACE_PATTERN = re.compile(r"\s+", re.UNICODE)
 # nltk.download('punkt') # download this
-
 
 def normalize_whitespace(text):
     """
@@ -192,7 +187,6 @@ def home(request: Request):
 
     return templates.TemplateResponse("index.html", {"request": request})
 
-
 @app.post("/")
 async def home(request: Request):
     sentence_count = 0
@@ -208,10 +202,7 @@ async def home(request: Request):
             tr4sh.analyze(text_str)
             summary = tr4sh.get_top_sentences(sentence_count)
             #word_cloud = wordcloud(summary)
-            
-            
-            
-            
+                        
     return templates.TemplateResponse("index.html", {"request": request, "summary": summary})
 
 
