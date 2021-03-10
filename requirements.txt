@@ -1,0 +1,3 @@
+nltk==3.5
+fastapi==0.61.2
+wordcloud==1.8.1
