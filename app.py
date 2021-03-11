@@ -201,9 +201,10 @@ async def home(request: Request):
             tr4sh = TextRank4Sentences()
             tr4sh.analyze(text_str)
             summary = tr4sh.get_top_sentences(sentence_count)
-            #word_cloud = wordcloud(summary)
+            listToStr = ' '.join([str(elem) for elem in summary])
+            word_cloud = wordcloud(listToStr)
                         
-    return templates.TemplateResponse("index.html", {"request": request, "summary": summary})
+    return templates.TemplateResponse("index.html", {"request": request, "summary": listToStr, "wordcloud": word_cloud})
 
 
 def wordcloud(text_str):
