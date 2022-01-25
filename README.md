@@ -1,4 +1,4 @@
-# fastapi_apps
+# textrank_fastapi
 Model deployment using FastApi
 
 - Keyword Extraction using TextRank algorithm with FastApi
