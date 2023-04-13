@@ -1,2 +1,5 @@
-__pycache__
-.vscode
+# Caches
+__pycache__/
+
+# Ignore the .env file
+txrenv/
