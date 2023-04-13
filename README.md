@@ -1,6 +1,5 @@
-# textrank_fastapi
-Model deployment using FastApi
+# Keyword Extraction with TextRank algorithm
 
 - Keyword Extraction using TextRank algorithm with FastApi
 
-Note: This is not a summarization algorithm. This Algorithm pics top sentences irrespective of the order they appeared.
+Note: This algorithm does not actually perform summarization, as it selects top sentences without regard for their position or order in the original text.
