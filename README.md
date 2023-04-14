@@ -36,3 +36,7 @@ If it will not start that port:
 ```prompt
 uvicorn app:app --reload --port 8001
 ```
+
+### Contributing
+
+If you find any issues or want to contribute to this project, please feel free to open a pull request or an issue.
