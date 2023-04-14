@@ -22,3 +22,17 @@ git clone https://github.com/ardaozmen/textrank_fastapi.git
 ```prompt
 cd textrank_fastapi-master
 ```
+
+### Usage
+
+To start the FastAPI server, run the following command:
+```prompt
+uvicorn app:app --reload
+```
+This will start the server on http://localhost:8000.
+
+
+If it will not start that port:
+```prompt
+uvicorn app:app --reload --port 8001
+```
